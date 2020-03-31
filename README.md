@@ -9,10 +9,11 @@ The goal of this app was to help learn the speech recognition APIs, not necessar
 ## Getting Started
 
 ```
-git clone ...
-cd ...
+git clone git@github.com:72A12F4E/SpeechRecognitionDemo.git
+cd SpeechRecognitionDemo
 open SpeechRecognitionDemoApp.xcodeproj
 ```
+
 ## Built With
 
 * [Speech](https://developer.apple.com/documentation/speech)
