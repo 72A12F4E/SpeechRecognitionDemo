@@ -27,15 +27,6 @@ public class SpeechRecognizer: ObservableObject {
     @Published
     public var isFinalized: Bool = false
     
-    
-    /// Number of seconds until the recording will be
-    /// halted after no new speech is recognized
-    public var recordingTimeout: TimeInterval = 3.0
-    
-    /// We use a DispatchWorkItem with `recordingTimeout` to cancel recording after
-    /// a deadline if the Speech API doesn't give us updated information.
-    private var cancelRecordingWorkItem: DispatchWorkItem?
-    
     private let audioEngine = AVAudioEngine()
     
     private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))!
@@ -83,15 +74,6 @@ public class SpeechRecognizer: ObservableObject {
                 var isFinal = false
                 if let result = result {
                     
-                    let cancelRecording = DispatchWorkItem {
-                        self.stopRecording()
-                    }
-                    self.cancelRecordingWorkItem?.cancel()
-                    self.cancelRecordingWorkItem = cancelRecording
-                    DispatchQueue.global().asyncAfter(deadline: .now() + self.recordingTimeout,
-                                                      execute: cancelRecording)
-                    
-                    //.asyncAfter(deadline: .now() + recordingTimeout, qos: .userInteractive, execute: cancelRecording)
                     self.recognizedSpeech = result.bestTranscription.formattedString
                     self.isFinalized = result.isFinal
                     if result.isFinal {
@@ -126,8 +108,9 @@ public class SpeechRecognizer: ObservableObject {
         DispatchQueue.main.async {
             self.audioEngine.stop()
             self.audioEngine.inputNode.removeTap(onBus: 0)
-            
             self.recognitionRequest = nil
+            self.recognitionTask?.cancel()
+            self.recognitionTask?.finish()
             self.recognitionTask = nil
             self.isRecognitionInProgress = false
             self.isFinalized = true

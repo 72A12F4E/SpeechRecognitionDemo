@@ -18,7 +18,11 @@ struct ContentView: View {
             Text((recognizer.recognizedSpeech ?? ""))
             Spacer()
             Button(recognizer.isRecognitionInProgress ? "recording" : "Tap To Recognize Speech", action: {
-                self.recognizer.recordAndRecognizeSpeech()
+                if self.recognizer.isRecognitionInProgress {
+                    self.recognizer.stopRecording()
+                } else {
+                    self.recognizer.recordAndRecognizeSpeech()
+                }
             })
         }.onAppear {
             self.recognizer.requestAuthorization()
