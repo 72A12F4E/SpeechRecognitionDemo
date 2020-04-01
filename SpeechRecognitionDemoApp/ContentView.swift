@@ -14,18 +14,20 @@ struct ContentView: View {
     var recognizer: SpeechRecognizer
     
     var body: some View {
-        VStack {
-            Text((recognizer.recognizedSpeech ?? ""))
-            Spacer()
-            Button(recognizer.isRecognitionInProgress ? "recording" : "Tap To Recognize Speech", action: {
-                if self.recognizer.isRecognitionInProgress {
-                    self.recognizer.stopRecording()
-                } else {
-                    self.recognizer.recordAndRecognizeSpeech()
-                }
-            })
-        }.onAppear {
-            self.recognizer.requestAuthorization()
+        NavigationView {
+            VStack {
+                Text((recognizer.recognizedSpeech ?? ""))
+                Spacer()
+                Button(recognizer.isRecognitionInProgress ? "recording" : "Tap To Recognize Speech", action: {
+                    if self.recognizer.isRecognitionInProgress {
+                        self.recognizer.stopRecording()
+                    } else {
+                        self.recognizer.recordAndRecognizeSpeech()
+                    }
+                })
+            }.onAppear {
+                self.recognizer.requestAuthorization()
+            }.navigationBarTitle("Speech API")
         }
     }
 }
